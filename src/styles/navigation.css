@@ -1,0 +1,28 @@
+.aside__list{
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--grey);
+}
+
+aside {
+    padding: 15px;
+}
+
+.aside__list-item{
+    margin-bottom: 15px;
+}
+
+.list__details-item{
+    margin-left: 20px;
+}
+
+.list__details-item:first-child{
+    margin-top: 5px;
+}
+
+nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px;
+}

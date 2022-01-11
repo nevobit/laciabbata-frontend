@@ -1,0 +1,9 @@
+:root{
+    --white: #FFF;
+    --soft-blue: #EDF2F9;
+    --just-blue: #1971e4;
+    --grey: #5E6E82;
+    --soft-grey: rgba(94, 110, 130, .2);
+    --soft-grey-transparent: rgba(94, 110, 130, .1);
+    --black: #262626;
+}
