@@ -46,7 +46,7 @@ export default function CategoriesScreen() {
     await setCategoryItem(cat);
     // if(!openModalUpdate){
       console.log(categoryItem)
-      await setUpdateName(categoryItem.name);
+      await setUpdateName(cat.name);
     // }
     await setOpenModalUpdate(true);
   }

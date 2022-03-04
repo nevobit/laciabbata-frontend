@@ -6,13 +6,15 @@ import {
   createProduct,
   deleteProduct,
   listProducts,
+  updateProduct,
 } from "../actions/productActions";
-import { PRODUCT_DELETE_REQUEST } from "../constants/productConstants";
+import { PRODUCT_DELETE_REQUEST, PRODUCT_UPDATE_RESET } from "../constants/productConstants";
 import DivisaFormater from "../components/DivisaFormater";
 import { listCategories } from "../actions/categoryActions";
 
 export default function ProductsScreen() {
   const [openModal, setOpenModal] = useState(false);
+  const [openModalUpdate, setOpenModalUpdate] = useState(false);
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Pasteleria");
@@ -21,6 +23,15 @@ export default function ProductsScreen() {
   const [priceDetal, setPriceDetal] = useState("");
   const [priceMajor, setPriceMajor] = useState("");
   const [stock, setStock] = useState("");
+
+  const [nameUpdate, setNameUpdate] = useState("");
+  const [categoryUpdate, setCategoryUpdate] = useState("Pasteleria");
+  const [buyPriceUpdate, setBuyPriceUpdate] = useState(0);
+  const [codeUpdate, setCodeUpdate] = useState(0);
+  const [priceDetalUpdate, setPriceDetalUpdate] = useState("");
+  const [priceMajorUpdate, setPriceMajorUpdate] = useState("");
+  const [stockUpdate, setStockUpdate] = useState("");
+  const [productItem, setProductItem] = useState([])
 
   const productCreate = useSelector((state) => state.productCreate);
   const { loading } = productCreate;
@@ -41,15 +52,38 @@ export default function ProductsScreen() {
     categories,
   } = categoriesList;
 
+  const productUpdate = useSelector((state) => state.productUpdate);
+  const {
+    loading: loadingUpdate,
+    error: errorUpdate,
+    success: successUpdate,
+  } = productUpdate;
+
   const dispatch = useDispatch();
+
+  const updateHandler = async (pro) => {
+    await setProductItem(pro);
+    await setNameUpdate(pro.name);
+    await setCategoryUpdate(pro.category);
+    await setBuyPriceUpdate(pro.buyPrice);
+    await setCodeUpdate(pro.code);
+    await setPriceDetalUpdate(pro.priceDetal);
+    await setPriceMajorUpdate(pro.priceMajor);
+    await setStockUpdate(pro.stock);
+    await setOpenModalUpdate(true);
+  }
 
   useEffect(() => {
     if (successDelete) {
       dispatch({ type: PRODUCT_DELETE_REQUEST });
     }
+    if (successUpdate) {
+      dispatch({ type: PRODUCT_UPDATE_RESET });
+    }
     dispatch(listProducts());
     dispatch(listCategories());
-  }, [dispatch, successDelete]);
+  }, [dispatch, successDelete, successUpdate]);
+
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -71,6 +105,20 @@ export default function ProductsScreen() {
   const deleteHandler = (id) => {
     dispatch(deleteProduct(id));
   };
+
+
+  const submitUpdateHandler = (e) => {
+    e.preventDefault();
+    setOpenModalUpdate(!openModalUpdate);
+    dispatch(updateProduct({_id: productItem._id, name: nameUpdate,
+      category : categoryUpdate,
+      buyPrice: buyPriceUpdate,
+      code: codeUpdate,
+      priceDetal: priceDetalUpdate,
+      priceMajor: priceMajorUpdate,
+      stock: stockUpdate }));
+    console.log('entro gsd');
+  }
 
   return (
     <>
@@ -139,7 +187,7 @@ export default function ProductsScreen() {
                         </td>
                         <td>{product.createdAt.substring(0, 10)}</td>
                         <td>
-                          <button>
+                          <button onClick={() => updateHandler(product)}>
                             <i className="bx bxs-pencil btn-icon"></i>
                           </button>
                           <button>
@@ -249,6 +297,98 @@ export default function ProductsScreen() {
           </div>
         </div>
       </div>
+      <div className={openModalUpdate ? "modal active" : "modal"}>
+        <div className="modal-dialog">
+          <div className="card">
+            <div className="card__header b-line">
+              <h2 className="card__title">Actualizar Producto</h2>
+            </div>
+            <div className="card__body">
+              <form action="">
+                <div className="form-group">
+                  <input
+                    type="text"
+                    id="name"
+                    placeholder="Descripcion"
+                    value={nameUpdate}
+                    onChange={(e) => setNameUpdate(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    id="code"
+                    placeholder="Codigo"
+                    value={codeUpdate}
+                    onChange={(e) => setCodeUpdate(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  {loadingListCategories ? (
+                    <LoadingBox></LoadingBox>
+                  ) : (
+                    <select
+                      name=""
+                      id="category"
+                      value={categoryUpdate}
+                      onChange={(e) => setCategoryUpdate(e.target.value)}
+                    >
+                      {categories.map((category) => (
+                        <option key={category._id} value={category.name}>{category.name}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    id="stock"
+                    placeholder="Stock"
+                    value={stockUpdate}
+                    onChange={(e) => setStockUpdate(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    id="buyPrice"
+                    placeholder="Precio Compra"
+                    value={buyPriceUpdate}
+                    onChange={(e) => setBuyPriceUpdate(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    id="price"
+                    placeholder="Precio al. detal"
+                    value={priceDetalUpdate}
+                    onChange={(e) => setPriceDetalUpdate(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    id="price"
+                    placeholder="Precio al por mayor"
+                    value={priceMajorUpdate}
+                    onChange={(e) => setPriceMajorUpdate(e.target.value)}
+                  />
+                </div>
+              </form>
+            </div>
+            <div className="card__footer flex center">
+              <button className="btn btn-success mr-10" onClick={(e) => submitUpdateHandler(e)}>
+                Guardar
+              </button>
+              <button className="btn" onClick={() => setOpenModalUpdate(!openModalUpdate)}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </>
   );
 }

@@ -57,7 +57,7 @@ export const updateCategory = (category) => async (dispatch) => {
   console.log(category);
   try {
     const { data } = await Axios.put(
-        `http://localhost:9000/api/categories/${category._id}`,
+        `https://laciabbata-backend.herokuapp.com/api/categories/${category._id}`,
       { category }
     );
     dispatch({ type: CATEGORY_UPDATE_SUCCESS, payload: data });

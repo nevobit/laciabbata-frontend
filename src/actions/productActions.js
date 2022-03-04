@@ -1,5 +1,5 @@
 import Axios from "axios";
-import {  PRODUCT_CREATE_FAIL, PRODUCT_CREATE_REQUEST, PRODUCT_CREATE_SUCCESS, PRODUCT_DELETE_FAIL, PRODUCT_DELETE_REQUEST, PRODUCT_DELETE_SUCCESS, PRODUCT_LIST_FAIL, PRODUCT_LIST_REQUEST, PRODUCT_LIST_SUCCESS } from "../constants/productConstants"
+import {  PRODUCT_CREATE_FAIL, PRODUCT_CREATE_REQUEST, PRODUCT_CREATE_SUCCESS, PRODUCT_DELETE_FAIL, PRODUCT_DELETE_REQUEST, PRODUCT_DELETE_SUCCESS, PRODUCT_LIST_FAIL, PRODUCT_LIST_REQUEST, PRODUCT_LIST_SUCCESS, PRODUCT_UPDATE_FAIL, PRODUCT_UPDATE_REQUEST, PRODUCT_UPDATE_SUCCESS } from "../constants/productConstants"
 
 export const listProducts = () => async(dispatch) => {
     dispatch({type: PRODUCT_LIST_REQUEST});
@@ -27,6 +27,27 @@ export const createProduct = (name, category, code, buyPrice, priceDetal, priceM
         dispatch({type: PRODUCT_CREATE_FAIL, payload: message});
     }
 };
+
+
+export const updateProduct = (product) => async (dispatch) => {
+    console.log("vino aca")
+  dispatch({ type: PRODUCT_UPDATE_REQUEST, payload: { product } });
+  console.log(product);
+  try {
+    const { data } = await Axios.put(
+        `https://laciabbata-backend.herokuapp.com/api/products/${product._id}`,
+      { product }
+    );
+    dispatch({ type: PRODUCT_UPDATE_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch({ type: PRODUCT_UPDATE_FAIL, payload: message });
+  }
+};
+
 
 export const deleteProduct = (id) => async(dispatch, getState) => {
     dispatch({type: PRODUCT_DELETE_REQUEST, payload: id});
