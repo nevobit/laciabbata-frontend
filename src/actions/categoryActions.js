@@ -1,46 +1,96 @@
 import Axios from "axios";
-import {  CATEGORY_CREATE_FAIL, CATEGORY_CREATE_REQUEST, CATEGORY_CREATE_SUCCESS, CATEGORY_DELETE_FAIL, CATEGORY_DELETE_REQUEST, CATEGORY_DELETE_SUCCESS, CATEGORY_LIST_FAIL, CATEGORY_LIST_REQUEST, CATEGORY_LIST_SUCCESS } from "../constants/categoryConstants"
+import {
+  CATEGORY_CREATE_FAIL,
+  CATEGORY_CREATE_REQUEST,
+  CATEGORY_CREATE_SUCCESS,
+  CATEGORY_DELETE_FAIL,
+  CATEGORY_DELETE_REQUEST,
+  CATEGORY_DELETE_SUCCESS,
+  CATEGORY_LIST_FAIL,
+  CATEGORY_LIST_REQUEST,
+  CATEGORY_LIST_SUCCESS,
+  CATEGORY_UPDATE_FAIL,
+  CATEGORY_UPDATE_REQUEST,
+  CATEGORY_UPDATE_SUCCESS,
+} from "../constants/categoryConstants";
 
-export const listCategories = () => async(dispatch) => {
-    dispatch({type: CATEGORY_LIST_REQUEST});
-    
-    try{
-        const {data} = await Axios.get('https://laciabbata-backend.herokuapp.com/api/categories');
-        console.log(data);
-        dispatch({type: CATEGORY_LIST_SUCCESS, payload: data});
-    }catch(error){
-        const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-        dispatch({type: CATEGORY_LIST_FAIL, payload: message});
-    }
+export const listCategories = () => async (dispatch) => {
+  dispatch({ type: CATEGORY_LIST_REQUEST });
+
+  try {
+    const { data } = await Axios.get(
+      "https://laciabbata-backend.herokuapp.com/api/categories"
+    );
+    console.log(data);
+    dispatch({ type: CATEGORY_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch({ type: CATEGORY_LIST_FAIL, payload: message });
+  }
 };
 
+export const createCategory = (name) => async (dispatch) => {
+  dispatch({ type: CATEGORY_CREATE_REQUEST, payload: { name } });
 
-export const createCategory = (name) => async(dispatch) => {
-    dispatch({type: CATEGORY_CREATE_REQUEST, payload: {name}});
-    
-    try{
-        const {data} = await Axios.post('https://laciabbata-backend.herokuapp.com/api/categories/create', {name});
-        console.log(data);
-        dispatch({type: CATEGORY_CREATE_SUCCESS, payload: data});
-    }catch(error){
-        const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-        dispatch({type: CATEGORY_CREATE_FAIL, payload: message});
-    }
+  try {
+    const { data } = await Axios.post(
+      "https://laciabbata-backend.herokuapp.com/api/categories/create",
+      { name }
+    );
+    console.log(data);
+    dispatch({ type: CATEGORY_CREATE_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch({ type: CATEGORY_CREATE_FAIL, payload: message });
+  }
 };
 
-export const deleteCategory = (id) => async(dispatch, getState) => {
-    dispatch({type: CATEGORY_DELETE_REQUEST, payload: id});
-    const {userSignin: {userInfo}} = getState();
+export const updateCategory = (category) => async (dispatch) => {
+    console.log("vino aca")
+  dispatch({ type: CATEGORY_UPDATE_REQUEST, payload: { category } });
+  console.log(category);
+  try {
+    const { data } = await Axios.put(
+        `http://localhost:9000/api/categories/${category._id}`,
+      { category }
+    );
+    dispatch({ type: CATEGORY_UPDATE_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch({ type: CATEGORY_UPDATE_FAIL, payload: message });
+  }
+};
 
-    try{
-        const {data} = await Axios.delete(`https://laciabbata-backend.herokuapp.com/api/categories/${id}`, {
-            headers: {Authorization: `Bearer ${userInfo.token}`},
-        });
+export const deleteCategory = (id) => async (dispatch, getState) => {
+  dispatch({ type: CATEGORY_DELETE_REQUEST, payload: id });
+  const {
+    userSignin: { userInfo },
+  } = getState();
 
-        dispatch({type: CATEGORY_DELETE_SUCCESS, payload: data});
-        localStorage.setItem('userInfo', JSON.stringify(data));
-    }catch(error){
-        const message = error.response && error.response.data.message ? error.response.data.message : error.message;
-        dispatch({type: CATEGORY_DELETE_FAIL, payload: message});
-    }
+  try {
+    const { data } = await Axios.delete(
+      `https://laciabbata-backend.herokuapp.com/api/categories/${id}`,
+      {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      }
+    );
+
+    dispatch({ type: CATEGORY_DELETE_SUCCESS, payload: data });
+    localStorage.setItem("userInfo", JSON.stringify(data));
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch({ type: CATEGORY_DELETE_FAIL, payload: message });
+  }
 };

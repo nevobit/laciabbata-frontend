@@ -79,7 +79,7 @@ export default function ReportsScreen() {
   const edateSelect = [];
   const etodaySelect = [];
   const emonthSelect = [];
-  if (!loadingExpense) {
+  if (!loadingExpense && expenses.length > 0) {
     expenses.map((expense) => {
       const ef1 = new Date(date);
       const ef2 = new Date(endDate);
